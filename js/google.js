@@ -1,5 +1,8 @@
+var langs = "";
 var geo = "აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ";
-var eng = "abgdevzTiklmnopJrstufqRySCcZwWxjh";
+var rus = "фипвумяЕшлдьтщзОкыегайКнЫСсЯцЦчорю";
+var eng = "abgdevzTiklmnopJrstufqRySCcZwWxjh.";
+
 var inputField = document.getElementsByName("q")[0];
 var searchButton = document.getElementsByName("btnG")[0];
 
@@ -15,15 +18,23 @@ function isDomain(str) {// regex for Domain name in English
 	return /^((?:[a-z0-9-]+\.)+(?:com|net|org))$/.test(str);
 }
 
-function isDomeInGeo(str) { // regex for Domain name in Goergian
+function isDomaInGeo(str) { // regex for Domain name in Goergian
 	return /^((?:[ა-ჰ0-9-]+\.)+(?:ცომ|ნეტ|ორგ|გე))$/.test(str);
 }
+function isDomaInRus(str) {
+    return /^((?:[а-я0-9-,])+([ю,]{1})+(?:сщь|туе|щкп|пу|кг))$/.test(str);
+}
 
-function translateQuery(query){ //translating query into possible English variant
+function translateQuery(query, lang){ //translating query into possible English variant
 	var translatedQuery = "";
+	if (lang == "geo") {
+		langs = geo;
+	} else {
+		langs = rus;
+	}
 	for (var i=0; i<query.length;i++) {
 		if (isLetter(query[i])) {
-			translatedQuery += eng[geo.indexOf(query[i])];
+			translatedQuery += eng[langs.indexOf(query[i])];
 		} else {
 			translatedQuery +=query[i];
 		}
@@ -39,11 +50,14 @@ function changeQuery(str){ // changing query into suggestion
 // main process
 function processQuery() {
 	var query = getQuery();
-	if (isDomeInGeo(query)) { //if it's correct query in Georgian
-		changeQuery(translateQuery(query));
+	if (isDomaInGeo(query)) { //if it's correct query in Georgian
+		changeQuery(translateQuery(query, "geo"));
 		searchButton.click();
-		
+	} else if (isDomaInRus(query)) {
+		changeQuery(translateQuery(query, "rus"));
+		searchButton.click();
 	}
+	
 }
 //typed in address bar
 processQuery();
